@@ -1,18 +1,26 @@
 
-interface Role {
-  id: number;
-  firstName: string;
-  lastName: string;
-  role: string;
-}
-
-const leaders: Role[] = [];
+import { useState } from "react";
+import OrganizationForm from "../components/OrganizationForm";
+import {
+  organizationRepo,
+  type Role,
+} from "../repositories/organizationRepo";
+import "../App.css";
 
 export default function Organization() {
+  const [people, setPeople] = useState<Role[]>(() =>
+    organizationRepo.getAll()
+  );
+
+  function refreshPeople() {
+    setPeople(organizationRepo.getAll());
+  }
+
   return (
     <div className="app">
       <h2>Organization</h2>
-      {leaders.map((person) => (
+
+      {people.map((person) => (
         <section key={person.id}>
           <span>
             {person.firstName} {person.lastName}
@@ -22,11 +30,8 @@ export default function Organization() {
           </span>
         </section>
       ))}
-      <p>
-        Add leadership names and roles from
-        the case study, page 15.
-      </p>
+
+      <OrganizationForm onCreated={refreshPeople} />
     </div>
   );
 }
-
